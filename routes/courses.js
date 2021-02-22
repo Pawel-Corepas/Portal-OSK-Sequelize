@@ -10,6 +10,7 @@ const validatorProcessor = require('./../api/utils/validatorProcessor');
 const coursesResponseEnvelope = require('../api/models/coursesResponseEnvelope');
 const courseResponseEnvelope = require('./../api/models/courseResponseEnvelope');
 const resourceIdEncoder = require('./../api/utils/resourceIdEncoder');
+const resourceIdDecoder = require('./../api/utils/resourceIdDecoder');
 const courseRequestConverter = require('../api/models/courseCommons/courseRequestConverter');
 
 
@@ -71,17 +72,17 @@ router.get('/', (req, res, next) => {
   });
   
   router.put('/:courseId', (req, res, next) => {
-    //it will add data to department table 
-  
-    //errors = validateCourseRequest(req.body)
-    errors = [];
+    
+    errors = validateCourseRequest(req.body)
+    course = courseRequestConverter(req.body)
+    courseId = resourceIdDecoder(req.params.courseId)
     if (errors.length == 0 ) {
-        Course.update(req.body, { where: { id: req.params.courseId } })
+        Course.update(course, { where: { id: courseId } })
       .then(function () {
         console.log("updated course")
-        Course.findOne({ where: { id: req.params.courseId } })
+        Course.findOne({ where: { id: courseId } })
           .then(function (courseRetrieved) {
-           var responseBody = courseResponseEnvelope(courseRetrieved, "/courses/" + resourceIdEncoder(req.params.courseId));
+           var responseBody = courseResponseEnvelope(courseRetrieved, "/courses/" + req.params.courseId);
             res.json(responseBody)
           }).catch(function (error) {
             res.json({ er: error })
