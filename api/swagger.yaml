@@ -1,0 +1,353 @@
+swagger: '2.0'
+info:
+  description: Swagger Spec Portal OSK API
+  version: '1.0.0'
+  title: Portal OSK API Specification
+  contact:
+    name: Nuapay
+    email: 'corepas.consulting@gmail.com'
+  license:
+    name: 'Corepas'
+    url: 'https://corepas.com'
+  x-logo:
+    backgroundColor: '#FFFFFF'
+    url: ''
+host: 'localhost:3000'
+basePath: /
+schemes:
+  - http
+tags:
+  - name: Instructors
+    description: |-
+      Instructors CRUD
+paths:
+  /instructors:
+    post:
+      tags:
+        - Instructors
+      summary: Retrieve Instructors
+      description: Retrieve Instructors
+      operationId: getInstructorsUsingGET
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Create Instructor Request
+          in: body  
+          required: true
+          description: Use it to filter banks to health to be returned for
+          schema:
+            $ref: '#/definitions/IntructorRequest'
+      responses:
+        201:
+          description: OK
+          schema:
+            $ref: '#/definitions/InstructorsResponseEnvelope'
+        400:
+          description: Bad request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: "T0000"
+              returnDescription: Validation errors occurred. Please see details.
+              details:
+                code: "T0001"
+                description: Page  is invalid
+                field: page
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null
+        403:
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null
+        405:
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null
+        429:
+          description: Too Many Requests
+          x-sentenial:
+            enriched: "true"
+          headers:
+            Retry-After:
+              type: integer
+              format: int32
+              description: Number in seconds to wait
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null
+      security:
+        - AdminOAuth2:
+            - instuctors_craete
+    get:
+      tags:
+        - Instructors
+      summary: Retrieve Instructors
+      description: Retrieve Instructors
+      operationId: getInstructorsUsingGET
+      produces:
+        - application/json
+      parameters:
+        - name: name
+          in: query
+          required: false
+          description: Name and surname of the instructor.
+          type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/ListInstuctorsResponseEnvelope'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null
+        403:
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: nul
+        405:
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null
+        429:
+          description: Too Many Requests
+          x-sentenial:
+            enriched: "true"
+          headers:
+            Retry-After:
+              type: integer
+              format: int32
+              description: Number in seconds to wait
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null
+      security:
+        - AdminOAuth2:
+            - instuctors_read
+securityDefinitions:
+  UserBasicAuth:
+    type: basic
+  AdminOAuth2:
+    type: oauth2
+    tokenUrl: https://api.nuapay.com/oauth/token_key
+    flow: password
+    scopes:
+      instuctors_craete: Create Instructor Access
+      instuctors_read: Read Instructors Access
+definitions:
+  IntructorRequest:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Name
+        maxLength: 45
+      surname:
+        type: string
+        description: Surname
+        maxLength: 45
+      email:
+        type: string
+        description: Instructor email
+        maxLength: 255
+        pattern: '*@.*'
+      mobile:
+        type: number
+        format: int32
+        description: Instructors mobile       
+      licenceId:
+        type: string
+        description:  Instructors Licence licenceId
+        minLength: 7
+        maxLength: 7
+        pattern: 'A-Z,a-z,0-9'
+      categories:
+        type: array
+        description: Categories that instructor has right to teach for.
+        items:
+          type: string
+          enum:
+          - A
+          - B
+          - C
+          - CE
+          - D
+          - DE
+          - AM 
+          - A1 
+          - A2
+  InstructorsResponseEnvelope:
+    type: object
+    properties:
+      uri:
+        type: string
+      data:
+        $ref: '#/definitions/Instructor'
+  Instructor:
+    type: object
+    properties:
+      id:
+        type: string
+      uri:
+        type: string
+      name:
+        type: string
+        description: Name
+        maxLength: 45
+      surname:
+        type: string
+        description: Surname
+        maxLength: 45
+      email:
+        type: string
+        description: Instructor email
+        maxLength: 255
+        pattern: '*@.*'
+      licenceId:
+        type: string
+        description:  Instructors Licence licenceId
+        minLength: 7
+        maxLength: 7
+        pattern: 'A-Z,a-z,0-9'
+      categories:
+        type: array
+        description: Categories that instructor has right to teach for.
+        items:
+          type: string
+          enum:
+          - A
+          - B
+          - C
+          - CE
+          - D
+          - DE
+          - AM 
+          - A1 
+          - A2
+      creationDateTime:
+        type: string
+        format: date-time
+      lastUpdateDateTime:
+        type: string
+        format: date-time
+      status: 
+        type: string
+        enum:
+          - ACTIVE
+          - INACTIVE
+          - SUSPENDED
+  ListInstuctorsResponseEnvelope:
+    type: object
+    properties:
+      uri:
+        type: string
+        description: resource Uri
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/Instructor'
+      page:
+        $ref: '#/definitions/RestResponsePaginationDetails'
+      sort:
+        type: array
+        items:
+          type: string
+  ErrorDetailsItem:
+    type: object
+    properties:
+      code:
+        type: string
+        description: Error code
+      description:
+        type: string
+        description: Error description
+      field:
+        type: string
+        description: JSON path to request object property the error is related to
+    title: ErrorDetailsItem
+  ErrorResponse:
+    type: object
+    properties:
+      details:
+        type: array
+        description: Holds list of input validation errors
+        items:
+          $ref: '#/definitions/ErrorDetailsItem'
+      returnCode:
+        type: string
+        description: Error type code
+      returnDescription:
+        type: string
+        description: Error type description
+    title: ErrorResponse
+  RestResponsePaginationDetails:
+    type: object
+    properties:
+      pageNumber:
+        type: integer
+        format: int32
+        description: Page Number
+      pageSize:
+        type: integer
+        format: int32
+        description: Page Size
+      totalElements:
+        type: integer
+        format: int32
+        description: Total Number of elements returned. Response parameter only
+      totalPages:
+        type: integer
+        format: int32
+        description: Total Number of pages returned. Response parameter only
