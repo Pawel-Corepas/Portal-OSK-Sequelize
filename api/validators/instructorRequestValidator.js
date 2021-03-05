@@ -3,13 +3,13 @@ const Validator = require('validatorjs');
 function validateInstructorRequest(request) {
     
  
-    fields = ["Name", "Surname", "Email", "Mobile", "LicenceId"]
+    fields = ["name", "surname", "email", "mobile", "licenceId"]
   let rules = {
-    Name: 'required',
-    Email: 'required|email',
-    Surname: 'required',
-    Mobile:'required',
-    LicenceId:'required|min:7',
+    name: 'required',
+    email: 'required|email',
+    surname: 'required',
+    mobile:'required',
+    licenceId:'required|min:7',
     
   };
 
