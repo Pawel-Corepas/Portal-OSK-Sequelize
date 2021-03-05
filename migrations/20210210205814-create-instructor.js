@@ -2,7 +2,7 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Instructors', {
-      Id: {
+      id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -17,7 +17,7 @@ module.exports = {
       Email: {
         type: Sequelize.STRING
       },
-    Mobile: {
+      Mobile: {
         type: Sequelize.STRING
       },
       LicenceId: {
@@ -25,7 +25,7 @@ module.exports = {
         allowNull: false,
         unique: true
       },
-      GSheetRef:{
+      GSheetRef: {
         type: Sequelize.STRING,
         unique: true
       },

@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       Instructor.hasMany(models.Category,{
       foreignKey:'InstructorId'
     }),
-      Instructor.belongsTo(models.Lesson,{foreignKey:'Id', target_key:'InstructorId'})
+      Instructor.belongsTo(models.Lesson,{foreignKey:'id', target_key:'InstructorId'})
     }
   };
   Instructor.init({
