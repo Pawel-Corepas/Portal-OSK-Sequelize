@@ -7,7 +7,7 @@ var router = express.Router();
 const Course = require('./../models').Course;
 const sequelize = require('sequelize');
 const validatorProcessor = require('./../api/utils/validatorProcessor');
-const coursesResponseEnvelope = require('../api/models/course/courseResponseEnvelope');
+const coursesResponseEnvelope = require('../api/models/course/coursesResponseEnvelope');
 const courseResponseEnvelope = require('../api/models/course/courseResponseEnvelope');
 const resourceIdDecoder = require('./../api/utils/resourceIdDecoder');
 const courseRequestConverter = require('../api/models/course/courseRequestConverter');
@@ -21,13 +21,13 @@ router.get('/', (req, res, next) => {
       var responseBody = coursesResponseEnvelope(data, "/courses", { pageSize: data.length, pageNumber: 1, totalPages: 1 }, [])
       res.json(responseBody)
     }).catch(function (error) {
-      var errors = validatorProcessor(error)
+     // var errors = validatorProcessor(error)
       console.log(error)
       res.status(422);
       res.json({
         returnCode: "T0000",
         returnDescription: "Validation errors occurred. Please see details.",
-        details: errors
+        details: error
       })
     })
 });

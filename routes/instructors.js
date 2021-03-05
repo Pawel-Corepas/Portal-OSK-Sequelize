@@ -57,17 +57,24 @@ router.get('/:instructorId', (req, res, next) => {
     res.status(404);
     res.send();
   }
-  Instructor.findOne({
-    include: { model: Category, as: 'Categories' }
-  },{ where: { id: instructorId } })
-    .then(function (data) {
-    
+  Instructor.findOne(
+    {
+      include: { 
+        model: Category,
+        as: 'Categories' },
+      where: {
+        id: instructorId
+      }
+    }
+  )
+  .then(function (data) {
+
       var responseBody = instructorResponseEnvelope(data, "/instructors/" + req.params.instructorId)
       res.json(responseBody)
     }).catch(function (error) {
       console.log(error)
       var errors = validatorProcessor(error)
-      
+
       res.status(422);
       res.json({
         returnCode: "T0000",
@@ -96,7 +103,7 @@ router.post('/', (req, res, next) => {
         console.log(error)
 
         errors = validatorProcessor(error)
-        
+
         res.status(422);
         res.json({
           returnCode: "T0000",
@@ -119,29 +126,61 @@ router.post('/', (req, res, next) => {
 
 
 router.put('/:instructorId', (req, res, next) => {
+
+
   //it will add data to department table 
 
+
   errors = validateInstructorRequest(req.body)
+  instructor = instructorRequestConverter(req.body)
+
+  try {
+    instructorId = resourceIdDecoder(req.params.instructorId)
+  } catch (error) {
+    console.error(error);
+    res.status(404);
+    res.send();
+  }
+  
   if (errors.length == 0) {
-    Instructor.update(req.body, { where: { id: req.params.instructorId } })
-      .then(function () {
+    Instructor.update(instructor, { where: { id: instructorId } }
+      ,{
+        include: {
+          model: Category
+        }
+      })
+      .then(function (instructor) {
+        console.log(instructor)
         console.log("updated instructor")
-        instructor.findOne({ where: { id: req.params.instructorId } })
-          .then(function (instructorRetrieved) {
+        Instructor.findOne(
+          {
+            include: { 
+              model: Category,
+              as: 'Categories' },
+            where: {
+              id: instructorId
+            }
+          }
+        )
+        .then(function (instructorRetrieved) {
+
             var responseBody = instructorResponseEnvelope(instructorRetrieved, "/instructors/" + req.params.instructorId)
+            console.log
             res.json(responseBody)
           }).catch(function (error) {
-            res.json({ er: error })
+            console.log(error)
+            res.status(404);
+            res.send();
           })
       }
       ).catch((error) => {
-        var errors = validatorProcessor(error)
+        // var errors = validatorProcessor(error)
         console.log(error)
         res.status(422);
         res.json({
           returnCode: "T0000",
           returnDescription: "Validation errors occurred. Please see details.",
-          details: errors
+          details: error
         })
       })
   }
